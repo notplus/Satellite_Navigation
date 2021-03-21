@@ -3,13 +3,13 @@ Description:
 Author: notplus
 Date: 2021-03-19 20:56:10
 LastEditors: notplus
-LastEditTime: 2021-03-19 21:09:32
+LastEditTime: 2021-03-19 21:47:18
 '''
 
 import numpy as np
-import os
 import argparse
 import sys
+import ephemeris.ephemeris as eph
 
 
 def parse_args():
@@ -18,10 +18,10 @@ def parse_args():
        """
     parser = argparse.ArgumentParser(
         description='Compute satellite coordinate')
-    parser.add_argument('--e', dest='ephemeris',
+    parser.add_argument('-e', dest='ephemeris',
                         help='input the ephemeris file',
                         default=None, type=str)
-    parser.add_argument('--o', dest='out_path',
+    parser.add_argument('-o', dest='out_path',
                         help='output file path',
                         default=None, type=str)
 
@@ -38,5 +38,5 @@ if __name__ == '__main__':
 
     print('Called with args:')
     print(args)
-
     
+    eph.test()

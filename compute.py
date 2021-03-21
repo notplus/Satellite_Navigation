@@ -3,7 +3,7 @@ Description:
 Author: notplus
 Date: 2021-03-19 20:56:10
 LastEditors: notplus
-LastEditTime: 2021-03-19 21:47:18
+LastEditTime: 2021-03-21 21:55:42
 '''
 
 import numpy as np
@@ -39,4 +39,5 @@ if __name__ == '__main__':
     print('Called with args:')
     print(args)
     
-    eph.test()
+    gps=eph.Ephemeris(args.ephemeris)
+    gps.test()

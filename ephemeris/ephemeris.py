@@ -3,12 +3,13 @@ Description:
 Author: notplus
 Date: 2021-03-19 21:35:25
 LastEditors: notplus
-LastEditTime: 2021-03-22 09:26:00
+LastEditTime: 2021-03-22 14:26:46
 '''
 
 import utils.constant as constant
 from utils.utils import parseDouble
 import math
+from utils.time_convert import Time
 
 
 class OC:
@@ -170,7 +171,16 @@ class Ephemeris:
 
                 self.__records += [record]
 
+    '''
+    description: 
+    param {*} self
+    param {*} prn
+    param {*} t
+    return {*}
+    '''
+
     def computeSatelliteCoordinates(self, prn, t):
+        t = t.GPST()
         t_k = t
         index = 0
         for i in range(len(self.__records)):
@@ -183,7 +193,7 @@ class Ephemeris:
         if abs(t_k) > 7200:
             print("Warning: the time difference is too large")
         record = self.__records[index]
-        
+
         a = record._sqrt_a*record._sqrt_a
         n_0 = math.sqrt(constant.mu/a/a/a)
         n = n_0+record._delta_n

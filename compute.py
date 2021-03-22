@@ -3,13 +3,14 @@ Description:
 Author: notplus
 Date: 2021-03-19 20:56:10
 LastEditors: notplus
-LastEditTime: 2021-03-22 08:56:15
+LastEditTime: 2021-03-22 14:27:25
 '''
 
 import numpy as np
 import argparse
 import sys
 import ephemeris.ephemeris as eph
+from utils.time_convert import Time
 
 
 def parse_args():
@@ -38,6 +39,6 @@ if __name__ == '__main__':
 
     print('Called with args:')
     print(args)
-    
-    gps=eph.Ephemeris(args.ephemeris)
-    gps.computeSatelliteCoordinates(1,0.345600000000e+06)
+
+    gps = eph.Ephemeris(args.ephemeris)
+    print(gps.computeSatelliteCoordinates(1, Time(2020, 11, 5)))

@@ -3,11 +3,12 @@ Description:
 Author: notplus
 Date: 2021-03-19 21:35:25
 LastEditors: notplus
-LastEditTime: 2021-03-22 08:03:04
+LastEditTime: 2021-03-22 09:26:00
 '''
 
-from utils.constant import *
+import utils.constant as constant
 from utils.utils import parseDouble
+import math
 
 
 class OC:
@@ -22,53 +23,53 @@ class OC:
 
 class SatelliteRecord:
     def __init__(self, prn, oc, clock_bias, clock_drift, clock_drift_rate):
-        self.prn = prn
-        self.oc = oc
-        self.clock_bias = clock_bias
-        self.clock_drift = clock_drift
-        self.clock_drift_rate = clock_drift_rate
+        self._prn = prn
+        self._oc = oc
+        self._clock_bias = clock_bias
+        self._clock_drift = clock_drift
+        self._clock_drift_rate = clock_drift_rate
 
     def setOrbit1(self, iode, c_rs, delta_n, m_0):
-        self.iode = iode
-        self.c_rs = c_rs
-        self.delta_n = delta_n
-        self.m_0 = m_0
+        self._iode = iode
+        self._c_rs = c_rs
+        self._delta_n = delta_n
+        self._m_0 = m_0
 
     def setOrbit2(self, c_uc, e, c_us, sqrt_a):
-        self.c_uc = c_uc
-        self.e = e
-        self.c_us = c_us
-        self.sqrt_a = sqrt_a
+        self._c_uc = c_uc
+        self._e = e
+        self._c_us = c_us
+        self._sqrt_a = sqrt_a
 
     def setOrbit3(self, toe, c_ic, omega_0, c_is):
-        self.toe = toe
-        self.c_ic = c_ic
-        self.omega_0 = omega_0
-        self.c_is = c_is
+        self._toe = toe
+        self._c_ic = c_ic
+        self._omega_0 = omega_0
+        self._c_is = c_is
 
     def setOrbit4(self, i_0, c_rc, omega, oemga_dot):
-        self.i_0 = i_0
-        self.c_rc = c_rc
-        self.omega = omega
-        self.oemga_dot = oemga_dot
+        self._i_0 = i_0
+        self._c_rc = c_rc
+        self._omega = omega
+        self._omega_dot = oemga_dot
 
     def setOrbit5(self, i, code_l2, gps_week, l2_flag):
-        self.i = i
-        self.code_l2 = code_l2
-        self.gps_week = gps_week
-        self.l2_flag = l2_flag
+        self._i = i
+        self._code_l2 = code_l2
+        self._gps_week = gps_week
+        self._l2_flag = l2_flag
 
     def setOrbit6(self, precision, status, tgd, iodc):
-        self.precision = precision
-        self.status = status
-        self.tgd = tgd
-        self.iodc = iodc
+        self._precision = precision
+        self._status = status
+        self._tgd = tgd
+        self._iodc = iodc
 
     def setOrbit7(self, send_time, h, backup_1, backup_2):
-        self.send_time = send_time
-        self.h = h
-        self.backup_1 = backup_1
-        self.backup_2 = backup_2
+        self._send_time = send_time
+        self._h = h
+        self._backup_1 = backup_1
+        self._backup_2 = backup_2
 
 
 class Ephemeris:
@@ -93,7 +94,7 @@ class Ephemeris:
 
             # line 3 COMMENT
             self.__comment = lines[2][0:60]
-            
+
             # line 4 ION ALPHA
             self.__ion_alpha_a0 = parseDouble(lines[3][2:14])
             self.__ion_alpha_a1 = parseDouble(lines[3][14:26])
@@ -120,7 +121,7 @@ class Ephemeris:
             # satellite records
 
             self.__records = []
-            for i in range(8,len(lines),8):
+            for i in range(8, len(lines), 8):
                 # line 1
                 prn = int(lines[i][0:2])
                 year = int(lines[i][3:5])
@@ -169,6 +170,58 @@ class Ephemeris:
 
                 self.__records += [record]
 
-    def test(self):
-        print(self.__rinex_version)
-        print(len(self.__records))
+    def computeSatelliteCoordinates(self, prn, t):
+        t_k = t
+        index = 0
+        for i in range(len(self.__records)):
+            if prn == self.__records[i]._prn:
+                tmp_t_k = t-self.__records[i]._toe
+                if abs(tmp_t_k) < abs(t_k):
+                    index = i
+                    t_k = abs(tmp_t_k)
+
+        if abs(t_k) > 7200:
+            print("Warning: the time difference is too large")
+        record = self.__records[index]
+        
+        a = record._sqrt_a*record._sqrt_a
+        n_0 = math.sqrt(constant.mu/a/a/a)
+        n = n_0+record._delta_n
+        m_k = record._m_0+n*t_k
+
+        e_k1 = m_k
+        e_k0 = 0.0
+        while abs(e_k1-e_k0) > 1e-12:
+            e_k0 = e_k1
+            e_k1 = m_k+record._e*math.sin(e_k0)
+        e_k = e_k1
+        v_k = math.atan(math.sqrt(1-record._e*record._e) /
+                        (1-record._e)*math.tan(e_k/2))*2
+
+        u_k = v_k+record._omega
+
+        delta_u_k = record._c_uc * \
+            math.cos(2*u_k)+record._c_us*math.sin(2*u_k)
+        delta_r_k = record._c_rc * \
+            math.cos(2*u_k)+record._c_rs*math.sin(2*u_k)
+        delta_i_k = record._c_ic * \
+            math.cos(2*u_k)+record._c_is*math.sin(2*u_k)
+
+        u = u_k+delta_u_k
+        r = a*(1-record._e*math.cos(e_k))+delta_r_k
+        i = record._i_0+delta_i_k
+
+        x = r*math.cos(u)
+        y = r*math.sin(u)
+
+        lambda_ = record._omega_0 + \
+            (record._omega_dot-constant.omega_e) * \
+            t_k-constant.omega_e*record._toe
+
+        X = r*(math.cos(u)*math.cos(lambda_)-math.sin(u)
+               * math.cos(i)*math.sin(lambda_))
+        Y = r*(math.cos(u)*math.sin(lambda_)+math.sin(u)
+               * math.cos(i)*math.cos(lambda_))
+        Z = r*math.sin(u)*math.sin(i)
+
+        return X, Y, Z

@@ -9,7 +9,7 @@ LastEditTime: 2021-03-22 14:27:25
 import numpy as np
 import argparse
 import sys
-import ephemeris.ephemeris as eph
+import ephemeris_module.ephemeris as eph
 from utils.time_convert import Time
 
 

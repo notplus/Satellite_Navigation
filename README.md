@@ -1,7 +1,6 @@
 # Satellite Coordinate Compute
 
 
-
 ## Demo Data format
 
 brdc\*\*\*\*\.\*\*n
@@ -16,3 +15,9 @@ igs\*\*\*\*\*.sp3
 gbm\*\*\*\*\*.sp3
 为gbm提供的多系统精密星历文件。
 
+## TODO
+* [x] RINEX2 parser
+* [x] GPS satellite coordinate compute
+* [ ] RINEX3 parser
+* [ ] BDS satellite coordinate compute
+* [ ] Precision ephemeris interpolation

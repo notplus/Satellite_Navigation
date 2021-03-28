@@ -3,7 +3,7 @@ Description:
 Author: notplus
 Date: 2021-03-19 20:56:10
 LastEditors: notplus
-LastEditTime: 2021-03-22 14:27:25
+LastEditTime: 2021-03-28 21:59:39
 '''
 
 import numpy as np
@@ -41,4 +41,6 @@ if __name__ == '__main__':
     print(args)
 
     gps = eph.Ephemeris(args.ephemeris)
-    print(gps.computeSatelliteCoordinates(1, Time(2020, 11, 5)))
+    # print(gps.computeSatelliteCoordinates(1, Time(2020, 11, 5)))
+    print(gps.computeSatelliteCoordinates(1, Time(2020, 11, 8)))
+

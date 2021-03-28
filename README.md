@@ -18,6 +18,6 @@ gbm\*\*\*\*\*.sp3
 ## TODO
 * [x] RINEX2 parser
 * [x] GPS satellite coordinate compute
-* [ ] RINEX3 parser
+* [x] RINEX3 parser
 * [ ] BDS satellite coordinate compute
 * [ ] Precision ephemeris interpolation

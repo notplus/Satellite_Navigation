@@ -3,12 +3,14 @@ Description:
 Author: notplus
 Date: 2021-03-28 16:59:12
 LastEditors: notplus
-LastEditTime: 2021-03-28 20:08:40
-FilePath: /satellite_coordinate/media/notplus/DATA1/course/satellite/satellite_coordinate/ephemeris_module/satellite_type/bds.py
+LastEditTime: 2021-03-28 21:59:04
+FilePath: /satellite_coordinate/ephemeris_module/satellite_type/bds.py
 '''
 
 from ephemeris_module.satellite import Satellite
-
+from utils.utils import parseDouble
+import math
+import utils.constant as constant
 
 class _BDSRecord(object):
     def __init__(self, system, prn, year, month, day, hour, minute, second, clock_bias, clock_drift, clock_drift_rate):

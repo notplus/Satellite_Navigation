@@ -3,7 +3,7 @@ Description:
 Author: notplus
 Date: 2021-03-22 09:33:09
 LastEditors: notplus
-LastEditTime: 2021-03-22 14:21:54
+LastEditTime: 2021-03-29 11:05:46
 '''
 
 import datetime
@@ -19,3 +19,6 @@ class Time(datetime.datetime):
 
     def GPST(self):
         return self.isoweekday() % 7 * 3600*24+self.hour*3600*self.minute*60+self.second
+    
+    def BDST(self):
+        return self.GPST()-14

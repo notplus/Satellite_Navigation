@@ -3,8 +3,8 @@ Description:
 Author: notplus
 Date: 2021-03-28 17:03:06
 LastEditors: notplus
-LastEditTime: 2021-03-28 20:14:37
-FilePath: /satellite_coordinate/media/notplus/DATA1/course/satellite/satellite_coordinate/ephemeris_module/satellite_type/gps.py
+LastEditTime: 2021-03-29 10:35:55
+FilePath: /satellite_coordinate/ephemeris_module/satellite_type/gps.py
 '''
 
 from ephemeris_module.satellite import Satellite
@@ -135,7 +135,7 @@ class GPS(Satellite):
                                   0, 0)
 
     def ComputeCoord(self, t):
-        t_k = abs(t-self.record.toe)
+        t_k = t-self.record.toe
         a = self.record.sqrt_a*self.record.sqrt_a
         n_0 = math.sqrt(constant.mu/a/a/a)
         n = n_0+self.record.delta_n

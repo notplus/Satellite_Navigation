@@ -3,9 +3,13 @@ Description:
 Author: notplus
 Date: 2021-03-28 21:58:33
 LastEditors: notplus
-LastEditTime: 2021-03-28 22:02:30
-FilePath: /satellite_coordinate/utils/utils.py
+LastEditTime: 2021-03-29 10:25:50
+FilePath: /satellite_coordinate/media/notplus/DATA1/course/satellite/satellite_coordinate/utils/utils.py
 '''
+
+import numpy as np
+
+bds_geo = [1,2,3,4,5,18,59,60,61]
 
 def parseDouble(str):
     str = str.replace('D', 'e')
@@ -14,3 +18,38 @@ def parseDouble(str):
         return float(str)
     else:
         return 0
+
+def is_bds_geo(prn):
+    if prn in bds_geo:
+        return True
+    else:
+        return False
+
+def rotation_matrix(roll, pitch, yaw):
+    r_x = np.array([[1, 0, 0],
+                    [0, np.cos(roll), -np.sin(roll)],
+                    [0, np.sin(roll), np.cos(roll)]], dtype=float)
+
+    r_y = np.array([[np.cos(pitch), 0, np.sin(pitch)],
+                    [0, 1, 0],
+                    [-np.sin(pitch), 0, np.cos(pitch)]], dtype=float)
+
+    r_z = np.array([[np.cos(yaw), -np.sin(yaw), 0],
+                    [np.sin(yaw), np.cos(yaw), 0],
+                    [0, 0, 1]], dtype=float)
+
+    R = np.matmul(np.matmul(r_x, r_y), r_z)
+
+    return R
+
+def rotation_matrix_z(epsilon):
+    r_z = np.array([[np.cos(epsilon), np.sin(epsilon), 0],
+                    [-np.sin(epsilon), np.cos(epsilon), 0],
+                    [0, 0, 1]], dtype=float)
+    return r_z
+
+def rotation_matrix_x(epsilon):
+    r_x = np.array([[1, 0, 0],
+                    [0, np.cos(epsilon), np.sin(epsilon)],
+                    [0, -np.sin(epsilon), np.cos(epsilon)]], dtype=float)
+    return r_x

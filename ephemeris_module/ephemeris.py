@@ -3,8 +3,8 @@ Description:
 Author: notplus
 Date: 2021-03-28 20:19:07
 LastEditors: notplus
-LastEditTime: 2021-03-28 22:02:21
-FilePath: /satellite_coordinate/ephemeris_module/ephemeris.py
+LastEditTime: 2021-03-29 10:33:09
+FilePath: /satellite_coordinate/media/notplus/DATA1/course/satellite/satellite_coordinate/ephemeris_module/ephemeris.py
 '''
 
 import utils.constant as constant
@@ -172,12 +172,16 @@ class Ephemeris:
     return {*}
     '''
 
-    def computeSatelliteCoordinates(self, prn, t):
-        t = t.GPST()
+    def compute_satellite_coordinates(self, prn, t, sys='G'):
+        if sys == 'G':
+            t = t.GPST()
+        elif sys == 'C':
+            t = t.BDST()
+
         t_k = t
         index = 0
         for i in range(len(self.__satellites)):
-            if prn == self.__satellites[i].record.prn:
+            if prn == self.__satellites[i].record.prn and sys == self.__satellites[i].record.system:
                 tmp_t_k = t-self.__satellites[i].record.toe
                 if abs(tmp_t_k) < abs(t_k):
                     index = i

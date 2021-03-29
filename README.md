@@ -15,6 +15,17 @@ igs\*\*\*\*\*.sp3
 gbm\*\*\*\*\*.sp3
 为gbm提供的多系统精密星历文件。
 
+## BDS GEO
+* BD2-G1 C01
+* BD2-G4 C04
+* BD2-G5 C05
+* BD2-G6 C02
+* BD2-G7 C03
+* BD2-G8 C18
+* BD3-G1 C59
+* BD3-G2 C60
+* BD3-G3 C61
+
 ## TODO
 * [x] RINEX2 parser
 * [x] GPS satellite coordinate compute

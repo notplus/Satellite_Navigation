@@ -18,7 +18,7 @@ class Time(datetime.datetime):
         return self.utctimetuple()
 
     def GPST(self):
-        return self.isoweekday() % 7 * 3600*24+self.hour*3600*self.minute*60+self.second
-    
+        return self.isoweekday() % 7 * 3600*24+self.hour*3600+self.minute*60+self.second
+
     def BDST(self):
         return self.GPST()-14

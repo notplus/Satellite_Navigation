@@ -3,8 +3,8 @@ Description:
 Author: notplus
 Date: 2021-03-28 20:19:07
 LastEditors: notplus
-LastEditTime: 2021-03-29 10:33:09
-FilePath: /satellite_coordinate/media/notplus/DATA1/course/satellite/satellite_coordinate/ephemeris_module/ephemeris.py
+LastEditTime: 2021-04-07 15:31:10
+FilePath: /satellite_coordinate/ephemeris_module/ephemeris.py
 '''
 
 import utils.constant as constant
@@ -13,6 +13,7 @@ import math
 from utils.time_convert import Time
 from ephemeris_module.satellite_type.gps import GPS
 from ephemeris_module.satellite_type.bds import BDS
+from datetime import timedelta
 
 
 class Ephemeris:
@@ -24,7 +25,7 @@ class Ephemeris:
         with open(path, 'r') as f:
             lines = f.readlines()
 
-            # RINEX 2/3 GPS Navigation
+            # RINEX 2/3 Navigation
             # parse header
 
             i = 0
@@ -191,3 +192,33 @@ class Ephemeris:
             print("Warning: the time difference is too large")
 
         return self.__satellites[index].ComputeCoord(t)
+
+    '''
+    @description: 
+    @param {*} self
+    @param {*} save_path
+    @param {*} prns
+    @param {Time} start_time
+    @param {Time} end_time
+    @param {*} interval (minutes)
+    @return {*}
+    '''
+
+    def output_precision_ephemeris(self, save_path, prns, start_time: Time, end_time: Time, interval):
+        print("write file %s" % save_path)
+        lines = []
+        with open(save_path, 'w') as f:
+            while start_time < end_time:
+                lines += ["*  %d %2d %2d %2d %2d  %.8f\n" % (start_time.year, start_time.month,
+                                                      start_time.day, start_time.hour, start_time.minute, start_time.second)]
+
+                for p in prns:
+                    # only support GPS
+                    x, y, z, ct = self.compute_satellite_coordinates(
+                        p, start_time, sys='G')
+                    lines += ["PG%02d %13.6f %13.6f %13.6f %13.6f\n" %
+                              (p, x/1000, y/1000, z/1000, ct*1e6)]
+
+                start_time += timedelta(minutes=interval)
+            lines+=['EOF\n']
+            f.writelines(lines)

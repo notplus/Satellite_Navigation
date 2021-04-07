@@ -3,12 +3,13 @@ Description:
 Author: notplus
 Date: 2021-03-28 17:03:06
 LastEditors: notplus
-LastEditTime: 2021-03-29 10:35:55
+LastEditTime: 2021-04-07 14:13:51
 FilePath: /satellite_coordinate/ephemeris_module/satellite_type/gps.py
 '''
 
 from ephemeris_module.satellite import Satellite
 from utils.utils import parseDouble
+from utils.time_convert import Time
 import math
 import utils.constant as constant
 
@@ -176,4 +177,7 @@ class GPS(Satellite):
                * math.cos(i)*math.cos(lambda_))
         Z = r*math.sin(u)*math.sin(i)
 
-        return X, Y, Z
+        t_c = t - Time(2000+self.record.year,self.record.month,self.record.day,self.record.hour,self.record.minute,int(self.record.second)).GPST()
+        ct = self.record.clock_bias+self.record.clock_drift*t_c+self.record.clock_drift_rate*t_c*t_c
+
+        return X, Y, Z, ct

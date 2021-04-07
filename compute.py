@@ -3,7 +3,7 @@ Description:
 Author: notplus
 Date: 2021-03-19 20:56:10
 LastEditors: notplus
-LastEditTime: 2021-03-29 10:43:38
+LastEditTime: 2021-04-07 15:56:52
 '''
 
 import numpy as np
@@ -41,8 +41,12 @@ if __name__ == '__main__':
     print(args)
 
     ephemeris = eph.Ephemeris(args.ephemeris)
-    print(ephemeris.compute_satellite_coordinates(1, Time(2020, 11, 5)))
+    # print(ephemeris.compute_satellite_coordinates(1, Time(2020, 11, 5)))
     # print(ephemeris.compute_satellite_coordinates(1, Time(2020, 11, 8)))
     # print(ephemeris.compute_satellite_coordinates(1, Time(2020, 11, 7), 'C')) # BD C01
 
-
+    prns= [1,2,3,4,5,6,7,8,9,10,11,12,13,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32]
+    
+    # Time(xxxx, xx, xx) 起始时间 / Time(xxxx, xx, xx)终止时间 / 5 时间间隔
+    ephemeris.output_precision_ephemeris(
+        args.out_path, prns, Time(2020, 11, 5), Time(2020, 11, 6), 5)

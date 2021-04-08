@@ -3,7 +3,7 @@ Description:
 Author: notplus
 Date: 2021-03-28 20:19:07
 LastEditors: notplus
-LastEditTime: 2021-04-07 15:31:10
+LastEditTime: 2021-04-08 11:20:40
 FilePath: /satellite_coordinate/ephemeris_module/ephemeris.py
 '''
 
@@ -179,7 +179,7 @@ class Ephemeris:
         elif sys == 'C':
             t = t.BDST()
 
-        t_k = t
+        t_k = 999999
         index = 0
         for i in range(len(self.__satellites)):
             if prn == self.__satellites[i].record.prn and sys == self.__satellites[i].record.system:

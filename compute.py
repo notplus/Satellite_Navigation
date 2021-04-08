@@ -3,7 +3,7 @@ Description:
 Author: notplus
 Date: 2021-03-19 20:56:10
 LastEditors: notplus
-LastEditTime: 2021-04-07 15:56:52
+LastEditTime: 2021-04-08 11:23:03
 '''
 
 import numpy as np
@@ -50,3 +50,6 @@ if __name__ == '__main__':
     # Time(xxxx, xx, xx) 起始时间 / Time(xxxx, xx, xx)终止时间 / 5 时间间隔
     ephemeris.output_precision_ephemeris(
         args.out_path, prns, Time(2020, 11, 5), Time(2020, 11, 6), 5)
+
+    # ephemeris.output_precision_ephemeris(
+    #     args.out_path, prns, Time(2020, 11, 8), Time(2020, 11, 9), 5)

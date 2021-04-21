@@ -3,7 +3,7 @@ Description:
 Author: notplus
 Date: 2021-03-28 20:19:07
 LastEditors: notplus
-LastEditTime: 2021-04-08 11:20:40
+LastEditTime: 2021-04-21 09:34:54
 FilePath: /satellite_coordinate/ephemeris_module/ephemeris.py
 '''
 
@@ -133,13 +133,15 @@ class Ephemeris:
                 i += 1
 
             # satellite records
-            self.__satellites = []
+            self.__satellites = dict()
 
             while i < len(lines):
                 satellite = None
+                sys = lines[i][0]
                 if self.__rinex_version < 3:
                     satellite = GPS(lines[i:i+8])
                     i += 8
+                    sys = 'G'
                 elif lines[i][0] == 'G':
                     satellite = GPS(lines[i:i+8])
                     i += 8
@@ -163,7 +165,13 @@ class Ephemeris:
                     i += 8
 
                 if satellite:
-                    self.__satellites += [satellite]
+                    # self.__satellites += [satellite]
+                    prn = sys+"%02d" % satellite.record.prn
+                    if prn in self.__satellites:
+                        self.__satellites[prn] += [satellite]
+                    else:
+                        self.__satellites[prn] = []
+                        self.__satellites[prn] += [satellite]
 
     '''
     description: 
@@ -173,25 +181,25 @@ class Ephemeris:
     return {*}
     '''
 
-    def compute_satellite_coordinates(self, prn, t, sys='G'):
-        if sys == 'G':
+    def compute_satellite_coordinates(self, prn, t):
+        if prn[0] == 'G':
             t = t.GPST()
-        elif sys == 'C':
+        elif prn[1] == 'C':
             t = t.BDST()
 
         t_k = 999999
         index = 0
-        for i in range(len(self.__satellites)):
-            if prn == self.__satellites[i].record.prn and sys == self.__satellites[i].record.system:
-                tmp_t_k = t-self.__satellites[i].record.toe
-                if abs(tmp_t_k) < abs(t_k):
-                    index = i
-                    t_k = abs(tmp_t_k)
+
+        for i in range(len(self.__satellites[prn])):
+            tmp_t_k = t-self.__satellites[prn][i].record.toe
+            if abs(tmp_t_k) < abs(t_k):
+                index = i
+                t_k = abs(tmp_t_k)
 
         if abs(t_k) > 7200:
             print("Warning: the time difference is too large")
 
-        return self.__satellites[index].ComputeCoord(t)
+        return self.__satellites[prn][index].ComputeCoord(t)
 
     '''
     @description: 
@@ -210,7 +218,7 @@ class Ephemeris:
         with open(save_path, 'w') as f:
             while start_time < end_time:
                 lines += ["*  %d %2d %2d %2d %2d  %.8f\n" % (start_time.year, start_time.month,
-                                                      start_time.day, start_time.hour, start_time.minute, start_time.second)]
+                                                             start_time.day, start_time.hour, start_time.minute, start_time.second)]
 
                 for p in prns:
                     # only support GPS
@@ -220,5 +228,5 @@ class Ephemeris:
                               (p, x/1000, y/1000, z/1000, ct*1e6)]
 
                 start_time += timedelta(minutes=interval)
-            lines+=['EOF\n']
+            lines += ['EOF\n']
             f.writelines(lines)

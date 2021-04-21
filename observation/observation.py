@@ -3,21 +3,28 @@ Description:
 Author: notplus
 Date: 2021-04-02 08:30:05
 LastEditors: notplus
-LastEditTime: 2021-04-20 20:21:30
+LastEditTime: 2021-04-21 09:26:37
 FilePath: /satellite_coordinate/observation/observation.py
 '''
 
 import math
+from utils.time_convert import Time
+
 
 class _ObsRecord(object):
     def __init__(self, year, month, day, hour, minute, second):
-        self.year = year
-        self.month = month
-        self.day = day
-        self.hour = hour
-        self.minute = minute
-        self.second = second
+        # self.year = year
+        # self.month = month
+        # self.day = day
+        # self.hour = hour
+        # self.minute = minute
+        # self.second = second
+        self.epoch = Time(year, month, day, hour, minute, int(
+            second), int((second-int(second))*1e6))
         self.data = dict()
+
+def takeEpoch(record):
+    return record.epoch
 
 
 class Observation(object):
@@ -188,11 +195,11 @@ class Observation(object):
             self.__records = []
 
             while i < len(lines):
-                if lines[i].find("COMMENT"):
-                    i+=1
+                if lines[i].startswith("                            4  1"):
+                    i += 2
                     continue
-                obs_rec = _ObsRecord(lines[i][1:3], lines[i][4:6], lines[i][7:9],
-                                     lines[i][10:12], lines[i][13:15], float(lines[i][15:26]))
+                obs_rec = _ObsRecord(int(lines[i][1:3])+2000, int(lines[i][4:6]), int(lines[i][7:9]),
+                                     int(lines[i][10:12]), int(lines[i][13:15]), float(lines[i][15:26]))
 
                 epoch_flag = int(lines[i][28:29])
 
@@ -202,7 +209,7 @@ class Observation(object):
 
                     for j in range(math.ceil(num_satellites/12)):
                         end = 12
-                        if j*12+12>num_satellites:
+                        if j*12+12 > num_satellites:
                             end = num_satellites-j*12
                         for ii in range(end):
                             obs_rec.data[lines[i][32+ii*3:35+ii*3]] = dict()
@@ -216,11 +223,18 @@ class Observation(object):
                             for j in range(end):
                                 obs_type = self.__observation_type[ii*5+j]
                                 obs_rec.data[s][obs_type] = dict()
-                                if lines[i][j*16:14+j*16].strip()!='':
-                                    obs_rec.data[s][obs_type]['Obs'] = float(lines[i][j*16:14+j*16])
+                                if lines[i][j*16:14+j*16].strip() != '':
+                                    obs_rec.data[s][obs_type]['Obs'] = float(
+                                        lines[i][j*16:14+j*16])
                                     obs_rec.data[s][obs_type]['LLI'] = lines[i][14+j*16:15+j*16]
                                     obs_rec.data[s][obs_type]['Signal_strength'] = lines[i][15+j*16:16+j*16]
                             i += 1
 
                     self.__records += [obs_rec]
 
+        self.__records.sort(key=takeEpoch)
+
+    def find_last_observation(self, t) -> _ObsRecord:
+        for i in range(1, len(self.__records)):
+            if abs((t-self.__records[i-1].epoch).total_seconds()) <= abs((t-self.__records[i].epoch).total_seconds()):
+                return self.__records[i-1]

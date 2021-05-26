@@ -3,7 +3,7 @@ Description:
 Author: notplus
 Date: 2021-04-21 16:09:48
 LastEditors: notplus
-LastEditTime: 2021-04-21 16:46:35
+LastEditTime: 2021-05-26 08:30:49
 FilePath: /satellite_coordinate/test.py
 '''
 from utils.time_convert import Time
@@ -31,9 +31,9 @@ class TestSPP(unittest.TestCase):
         print("Y:%f/%f"%(np.max(error,axis=0)[1],np.min(error,axis=0)[1]))
         print("Z:%f/%f"%(np.max(error,axis=0)[2],np.min(error,axis=0)[2]))
 
-        self.assertLess(np.mean(error,axis=0)[0],20,msg="X direction error is too large")
-        self.assertLess(np.mean(error,axis=0)[1],20,msg="Y direction error is too large")
-        self.assertLess(np.mean(error,axis=0)[2],20,msg="Z direction error is too large")
+        self.assertLess(np.mean(error,axis=0)[0],10,msg="X direction error is too large")
+        self.assertLess(np.mean(error,axis=0)[1],10,msg="Y direction error is too large")
+        self.assertLess(np.mean(error,axis=0)[2],10,msg="Z direction error is too large")
 
         
     def test_leij_3100(self):
@@ -53,9 +53,9 @@ class TestSPP(unittest.TestCase):
         print("X:%f/%f"%(np.max(error,axis=0)[0],np.min(error,axis=0)[0]))
         print("Y:%f/%f"%(np.max(error,axis=0)[1],np.min(error,axis=0)[1]))
         print("Z:%f/%f"%(np.max(error,axis=0)[2],np.min(error,axis=0)[2]))
-        self.assertLess(np.mean(error,axis=0)[0],20,msg="X direction error is too large")
-        self.assertLess(np.mean(error,axis=0)[1],20,msg="Y direction error is too large")
-        self.assertLess(np.mean(error,axis=0)[2],20,msg="Z direction error is too large")
+        self.assertLess(np.mean(error,axis=0)[0],10,msg="X direction error is too large")
+        self.assertLess(np.mean(error,axis=0)[1],10,msg="Y direction error is too large")
+        self.assertLess(np.mean(error,axis=0)[2],10,msg="Z direction error is too large")
 
     def test_warn_3100(self):
         spp = SinglePointPositioning(
@@ -74,9 +74,9 @@ class TestSPP(unittest.TestCase):
         print("X:%f/%f"%(np.max(error,axis=0)[0],np.min(error,axis=0)[0]))
         print("Y:%f/%f"%(np.max(error,axis=0)[1],np.min(error,axis=0)[1]))
         print("Z:%f/%f"%(np.max(error,axis=0)[2],np.min(error,axis=0)[2]))
-        self.assertLess(np.mean(error,axis=0)[0],20,msg="X direction error is too large")
-        self.assertLess(np.mean(error,axis=0)[1],20,msg="Y direction error is too large")
-        self.assertLess(np.mean(error,axis=0)[2],20,msg="Z direction error is too large")
+        self.assertLess(np.mean(error,axis=0)[0],10,msg="X direction error is too large")
+        self.assertLess(np.mean(error,axis=0)[1],10,msg="Y direction error is too large")
+        self.assertLess(np.mean(error,axis=0)[2],10,msg="Z direction error is too large")
 
 if __name__ == '__main__':
     unittest.main()

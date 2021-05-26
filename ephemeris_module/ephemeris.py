@@ -3,13 +3,11 @@ Description:
 Author: notplus
 Date: 2021-03-28 20:19:07
 LastEditors: notplus
-LastEditTime: 2021-04-21 09:34:54
+LastEditTime: 2021-05-26 08:31:28
 FilePath: /satellite_coordinate/ephemeris_module/ephemeris.py
 '''
 
-import utils.constant as constant
 from utils.utils import parseDouble
-import math
 from utils.time_convert import Time
 from ephemeris_module.satellite_type.gps import GPS
 from ephemeris_module.satellite_type.bds import BDS

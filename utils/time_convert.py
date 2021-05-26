@@ -3,7 +3,7 @@ Description:
 Author: notplus
 Date: 2021-03-22 09:33:09
 LastEditors: notplus
-LastEditTime: 2021-04-21 10:05:15
+LastEditTime: 2021-04-21 19:56:45
 '''
 
 import datetime
@@ -29,3 +29,8 @@ class Time(datetime.datetime):
 
     def set_float_second(self, float_sec):
         self.__float_second = float_sec
+    
+    def clone(self):
+        t = Time(self.year,self.month,self.day,self.hour,self.minute,self.second)
+        t.set_float_second(self.get_float_second())
+        return t

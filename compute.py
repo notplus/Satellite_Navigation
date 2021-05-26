@@ -3,7 +3,7 @@ Description:
 Author: notplus
 Date: 2021-03-19 20:56:10
 LastEditors: notplus
-LastEditTime: 2021-04-21 14:53:47
+LastEditTime: 2021-04-21 18:25:03
 '''
 
 import numpy as np
@@ -63,3 +63,6 @@ if __name__ == '__main__':
         spp = SinglePointPositioning(args.ephemeris, args.observation)
         print(spp.compute_satellite_coordinates('G02', Time(2020, 11, 5)))
         print(spp.positioning(Time(2020, 11, 5)))
+        x, y, z = spp.positioning(Time(2020, 11, 5))
+        ax, ay, az = -0.267442768572702E+07, 0.375714305701559E+07, 0.439152148514515E+07
+        print([abs(x-ax), abs(y-ay), abs(z-az)])

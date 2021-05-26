@@ -1,16 +1,19 @@
 '''
 Description: 
 Author: notplus
-Date: 2021-04-21 10:10:31
+Date: 2021-05-26 10:17:09
 LastEditors: notplus
-LastEditTime: 2021-04-21 15:50:33
-FilePath: /satellite_coordinate/utils/coord_sys_trans.py
+LastEditTime: 2021-05-26 10:17:23
+FilePath: /utils/coord_sys_trans.py
+
+Copyright (c) 2021 notplus
 '''
 
 from math import sin
 from math import cos
 from math import atan
 from math import sqrt
+from math import pi
 import utils.constant as constant
 
 '''
@@ -21,6 +24,8 @@ import utils.constant as constant
 @param {*} alpha
 @return {*}
 '''
+
+
 def wgs84_to_ecef(x, y, z, alpha):
     nx = cos(alpha)*x+sin(alpha)*y
     ny = -sin(alpha)*x+cos(alpha)*y
@@ -38,9 +43,15 @@ def wgs84_to_ecef(x, y, z, alpha):
 @param {*} sz
 @return {*}
 '''
+
+
 def wgs84_to_enu(x, y, z, sx, sy, sz):
     e = sqrt(2*constant.f-constant.f*constant.f)
     L = atan(y/x)
+    if x < 0:
+        L += pi
+    elif x > 0 and y < 0:
+        L += 2*pi
     B0 = atan(z/sqrt(x*x+y*y))
     N = constant.a/sqrt(1-e*e*sin(B0)*sin(B0))
     B1 = atan((z+N*e*e*sin(B0))/sqrt(x*x+y*y))
@@ -69,6 +80,8 @@ def wgs84_to_enu(x, y, z, sx, sy, sz):
 @param {*} sz
 @return {*}
 '''
+
+
 def get_wgs84_elevation(x, y, z, sx, sy, sz):
     e, n, u = wgs84_to_enu(x, y, z, sx, sy, sz)
     return atan(u/sqrt(n*n+e*e))

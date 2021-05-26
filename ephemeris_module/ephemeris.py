@@ -1,10 +1,12 @@
 '''
 Description: 
 Author: notplus
-Date: 2021-03-28 20:19:07
+Date: 2021-05-26 08:31:28
 LastEditors: notplus
-LastEditTime: 2021-05-26 08:31:28
-FilePath: /satellite_coordinate/ephemeris_module/ephemeris.py
+LastEditTime: 2021-05-26 09:30:19
+FilePath: /ephemeris_module/ephemeris.py
+
+Copyright (c) 2021 notplus
 '''
 
 from utils.utils import parseDouble
@@ -179,12 +181,7 @@ class Ephemeris:
     return {*}
     '''
 
-    def compute_satellite_coordinates(self, prn, t):
-        if prn[0] == 'G':
-            t = t.GPST()
-        elif prn[1] == 'C':
-            t = t.BDST()
-
+    def find_last_satellite_ephemeris(self, prn, t):
         t_k = 999999
         index = 0
 
@@ -196,8 +193,14 @@ class Ephemeris:
 
         if abs(t_k) > 7200:
             print("Warning: the time difference is too large")
+        return self.__satellites[prn][index]
 
-        return self.__satellites[prn][index].ComputeCoord(t)
+    def compute_satellite_coordinates(self, prn, t):
+        if prn[0] == 'G':
+            t = t.GPST()
+        elif prn[1] == 'C':
+            t = t.BDST()
+        return self.find_last_satellite_ephemeris(prn, t).ComputeCoord(t)
 
     '''
     @description: 

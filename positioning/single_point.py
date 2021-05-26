@@ -1,26 +1,35 @@
 '''
 Description: 
 Author: notplus
-Date: 2021-04-20 21:19:15
+Date: 2021-05-26 08:51:32
 LastEditors: notplus
-LastEditTime: 2021-05-26 08:33:51
-FilePath: /satellite_coordinate/positioning/single_point.py
+LastEditTime: 2021-05-26 10:16:46
+FilePath: /positioning/single_point.py
+
+Copyright (c) 2021 notplus
 '''
 
 from ephemeris_module.ephemeris import Ephemeris
 from observation.observation import Observation
-# from utils.time_convert import Time
 import utils.constant as constant
 from utils.coord_sys_trans import wgs84_to_ecef
 import math
 import numpy as np
 from utils.coord_sys_trans import get_wgs84_elevation
+from positioning.correction import compute_relativistic_correction
 
 
 class SinglePointPositioning(object):
     def __init__(self, ephemeris_path, observation_path):
         self.__ephemeris = Ephemeris(ephemeris_path)
         self.__observation = Observation(observation_path)
+
+    '''
+    @description: 
+    @param {*} self
+    @param {*} t
+    @return {*}
+    '''
 
     def positioning(self, t):
         X, Y, Z, dt_r = 1000, 1000, 1000, 0
@@ -62,6 +71,10 @@ class SinglePointPositioning(object):
 
                 sx, sy, sz, dt_s = self.__ephemeris.compute_satellite_coordinates(
                     prn, ts_2)
+
+                dt_s += compute_relativistic_correction(
+                    self.__ephemeris.find_last_satellite_ephemeris(prn, t.GPST()), ts_2.GPST())
+                
                 dt_earth = t.clone()
                 dt_earth.set_float_second(
                     dt_earth.get_float_second()+dt_r/constant.c-ts_2.get_float_second())
@@ -92,6 +105,14 @@ class SinglePointPositioning(object):
                 break
 
         return X, Y, Z
+
+    '''
+    @description: 
+    @param {*} self
+    @param {*} prn
+    @param {*} t
+    @return {*}
+    '''
 
     def compute_satellite_coordinates(self, prn, t):
         return self.__ephemeris.compute_satellite_coordinates(prn, t)

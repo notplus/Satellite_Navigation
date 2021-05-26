@@ -1,9 +1,12 @@
 '''
 Description: 
 Author: notplus
-Date: 2021-03-19 20:56:10
+Date: 2021-04-21 18:25:03
 LastEditors: notplus
-LastEditTime: 2021-04-21 18:25:03
+LastEditTime: 2021-05-26 10:17:38
+FilePath: /compute.py
+
+Copyright (c) 2021 notplus
 '''
 
 import numpy as np

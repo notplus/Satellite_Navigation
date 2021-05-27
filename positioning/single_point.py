@@ -3,7 +3,7 @@ Description:
 Author: notplus
 Date: 2021-05-26 08:51:32
 LastEditors: notplus
-LastEditTime: 2021-05-26 10:16:46
+LastEditTime: 2021-05-27 19:31:11
 FilePath: /positioning/single_point.py
 
 Copyright (c) 2021 notplus
@@ -15,8 +15,8 @@ import utils.constant as constant
 from utils.coord_sys_trans import wgs84_to_ecef
 import math
 import numpy as np
-from utils.coord_sys_trans import get_wgs84_elevation
-from positioning.correction import compute_relativistic_correction
+from utils.coord_sys_trans import get_wgs84_elevation_azimuth
+from positioning.correction import *
 
 
 class SinglePointPositioning(object):
@@ -72,17 +72,30 @@ class SinglePointPositioning(object):
                 sx, sy, sz, dt_s = self.__ephemeris.compute_satellite_coordinates(
                     prn, ts_2)
 
+                # 相对论效应改正
                 dt_s += compute_relativistic_correction(
                     self.__ephemeris.find_last_satellite_ephemeris(prn, t.GPST()), ts_2.GPST())
-                
+
+                # 地球自转改正
                 dt_earth = t.clone()
                 dt_earth.set_float_second(
                     dt_earth.get_float_second()+dt_r/constant.c-ts_2.get_float_second())
                 nx, ny, nz = wgs84_to_ecef(
                     sx, sy, sz, dt_earth.get_float_second()*constant.omega_e)
 
-                elevation = get_wgs84_elevation(X, Y, Z, nx, ny, nz)
+                # 权阵计算
+                elevation, azimuth = get_wgs84_elevation_azimuth(
+                    X, Y, Z, nx, ny, nz)
                 P[i][i] = math.sin(elevation)*math.sin(elevation)
+
+                # 电离层改正
+                phi, lambda_, _ = wgs84_to_blh(nx, ny, nz)
+                delta_ion = compute_ionosphere_correction_k8_model(
+                    ts_2, self.__ephemeris, elevation, azimuth, phi, lambda_)
+
+                # 对流层改正
+                _,_,h_r = wgs84_to_blh(X,Y,Z)
+                delta_tro = compute_troposphere_correction_hopfield(h_r,elevation)
 
                 R = math.sqrt((nx-X)*(nx-X)+(ny-Y)*(ny-Y)+(nz-Z)*(nz-Z))
                 A[i][0] = (X-nx)/R
@@ -90,7 +103,7 @@ class SinglePointPositioning(object):
                 A[i][2] = (Z-nz)/R
                 A[i][3] = 1
                 l[i][0] = rho - R + constant.c*dt_s + \
-                    1.54573 * (rho - obs.data[prn]['P2']['Obs'])
+                    1.54573 * (rho - obs.data[prn]['P2']['Obs']) + delta_tro
                 i += 1
 
             nxx = np.dot(np.dot(np.dot(np.linalg.inv(

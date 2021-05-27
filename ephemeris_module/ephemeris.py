@@ -3,7 +3,7 @@ Description:
 Author: notplus
 Date: 2021-05-26 08:31:28
 LastEditors: notplus
-LastEditTime: 2021-05-26 09:30:19
+LastEditTime: 2021-05-27 18:42:57
 FilePath: /ephemeris_module/ephemeris.py
 
 Copyright (c) 2021 notplus
@@ -49,17 +49,17 @@ class Ephemeris:
 
             if self.__rinex_version < 3:  # Version 2
                 # ION ALPHA (optional)
-                self.__ion_alpha_a0 = parseDouble(lines[i][2:14])
-                self.__ion_alpha_a1 = parseDouble(lines[i][14:26])
-                self.__ion_alpha_a2 = parseDouble(lines[i][26:40])
-                self.__ion_alpha_a3 = parseDouble(lines[i][40:52])
+                self.ion_alpha_a0 = parseDouble(lines[i][2:14])
+                self.ion_alpha_a1 = parseDouble(lines[i][14:26])
+                self.ion_alpha_a2 = parseDouble(lines[i][26:40])
+                self.ion_alpha_a3 = parseDouble(lines[i][40:52])
                 i += 1
 
                 # ION BETA (optional)
-                self.__ion_beta_b0 = parseDouble(lines[i][2:14])
-                self.__ion_beta_b1 = parseDouble(lines[i][14:26])
-                self.__ion_beta_b2 = parseDouble(lines[i][26:40])
-                self.__ion_beta_b3 = parseDouble(lines[i][40:52])
+                self.ion_beta_b0 = parseDouble(lines[i][2:14])
+                self.ion_beta_b1 = parseDouble(lines[i][14:26])
+                self.ion_beta_b2 = parseDouble(lines[i][26:40])
+                self.ion_beta_b3 = parseDouble(lines[i][40:52])
                 i += 1
 
                 # DELTA-UTC: A0,A1,T,W (optional)

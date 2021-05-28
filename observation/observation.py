@@ -1,10 +1,12 @@
 '''
 Description: 
 Author: notplus
-Date: 2021-04-02 08:30:05
+Date: 2021-05-28 16:19:54
 LastEditors: notplus
-LastEditTime: 2021-04-21 09:26:37
-FilePath: /satellite_coordinate/observation/observation.py
+LastEditTime: 2021-05-28 17:50:30
+FilePath: /observation/observation.py
+
+Copyright (c) 2021 notplus
 '''
 
 import math
@@ -22,6 +24,7 @@ class _ObsRecord(object):
         self.epoch = Time(year, month, day, hour, minute, int(
             second), int((second-int(second))*1e6))
         self.data = dict()
+
 
 def takeEpoch(record):
     return record.epoch
@@ -238,3 +241,12 @@ class Observation(object):
         for i in range(1, len(self.__records)):
             if abs((t-self.__records[i-1].epoch).total_seconds()) <= abs((t-self.__records[i].epoch).total_seconds()):
                 return self.__records[i-1]
+        return self.__records[len(self.__records)-1]
+
+    def get_observation_start_time(self) -> Time:
+        if len(self.__records) != 0:
+            return takeEpoch(self.__records[0])
+
+    def get_observation_end_time(self) -> Time:
+        if len(self.__records) != 0:
+            return takeEpoch(self.__records[len(self.__records)-1])

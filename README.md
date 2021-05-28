@@ -14,7 +14,12 @@
    * `./demo/result/brdm3130.txt`为`brdm3130.20p`转换的精密星历 (仅有GPS数据)
    * 输出的起止时间、卫星、间隔时间参数(分钟单位)需要在`compute.py`中48、51、52(54、55)行中调整
 
+2. 伪距单点定位：
 
+   * 使用说明：`python3 compute.py -e /path/to/ephemeris_file -o /path/to/observation_file`
+   * 可通过`python3 compute.py -h`获取参数说明
+   * 依赖`numpy`,`matplotlib`
+   * 输出观测文件从起始到结束每隔2小时的单点定位结果和每隔30秒定位DOP图
 ## Demo Data format
 
 brdc\*\*\*\*\.\*\*n

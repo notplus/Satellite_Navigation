@@ -3,7 +3,7 @@ Description:
 Author: notplus
 Date: 2021-04-21 18:25:03
 LastEditors: notplus
-LastEditTime: 2021-05-26 10:17:38
+LastEditTime: 2021-05-28 17:45:18
 FilePath: /compute.py
 
 Copyright (c) 2021 notplus
@@ -48,6 +48,7 @@ if __name__ == '__main__':
     print('Called with args:')
     print(args)
 
+    # 第一阶段
     # ephemeris = eph.Ephemeris(args.ephemeris)
     # print(ephemeris.compute_satellite_coordinates(1, Time(2020, 11, 5)))
     # print(ephemeris.compute_satellite_coordinates(1, Time(2020, 11, 8)))
@@ -62,10 +63,8 @@ if __name__ == '__main__':
     # ephemeris.output_precision_ephemeris(
     #     args.out_path, prns, Time(2020, 11, 8), Time(2020, 11, 9), 5)
 
+    # 第二阶段 单点定位
     if args.ephemeris and args.observation:
         spp = SinglePointPositioning(args.ephemeris, args.observation)
-        print(spp.compute_satellite_coordinates('G02', Time(2020, 11, 5)))
-        print(spp.positioning(Time(2020, 11, 5)))
-        x, y, z = spp.positioning(Time(2020, 11, 5))
-        ax, ay, az = -0.267442768572702E+07, 0.375714305701559E+07, 0.439152148514515E+07
-        print([abs(x-ax), abs(y-ay), abs(z-az)])
+        spp.single_point_positioning_demo()
+
